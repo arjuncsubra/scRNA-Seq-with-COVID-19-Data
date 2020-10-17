@@ -50,8 +50,5 @@ $$\\[0in]$$
 If you want to follow along, go to the [GitHub repository for this project](). It will contain many files and data that are necessary. Make sure you download the whole thing. 
 
 ### R and Bioconductor
-=======
-**scRNA-Seq**, short for single-cell RNA sequencing, is the analysis of transcribed messenger RNA (mRNA) in single cells. Practically, scRNA-Seq involves the process of counting mRNA transcripts of many single cells, usually from one tissue.
 
-We perform scRNA-Seq because
->>>>>>> 883f2254a428c38e6ef7baab40664ced1aef92c0
+
