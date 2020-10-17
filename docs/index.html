@@ -371,12 +371,31 @@ summary {
 
 
 <p><span class="math display">\[\\[0in]\]</span></p>
-<div id="overview" class="section level1">
-<h1>Overview</h1>
-<p>In this project, my aim is to provide an overview of</p>
-<div id="what-is-scrna-seq" class="section level3">
-<h3>What is scRNA-Seq?</h3>
-<p><strong>scRNA-Seq</strong>, short for single-cell RNA sequencing, is the analysis of transcribed messenger RNA (mRNA) in single cells. Practically, scRNA-Seq involves the process of counting mRNA transcripts of many single cells, usually from one tissue.</p>
+<div id="project-overview" class="section level1">
+<h1>Project Overview</h1>
+<p>In this project, I aim to provide an overview of data analysis associated with <strong>scRNA-Seq (single-cell RNA sequencing)</strong>, by creating cell clustering maps.</p>
+<div id="scrna-seq" class="section level3">
+<h3>scRNA-Seq</h3>
+<p>scRNA-Seq measures the activity of thousands of genes within single cells. It practically accomplishes this by measuring the transcriptome (the sum of mRNA or messenger RNA transcripts) of many single cells, usually from one tissue.</p>
+<p>The main goal of scRNA-Seq is to <a href="https://osca.bioconductor.org/feature-selection.html">“characterize heterogeneity across cells”</a> by measuring gene expression differences between single cells.</p>
+<p>By allowing us to cell-specific expression differences, scRNA-Seq gives us detailed information that is useful for a number of applications. For example, we can identify gene expression patterns between individuals who have and do not have a certain disease.</p>
+</div>
+<div id="the-dataset" class="section level3">
+<h3>The Dataset</h3>
+<p>This project uses raw data from the <a href="https://www.nature.com/articles/s41591-020-0901-9">following paper</a>, titled “Single-cell landscape of bronchoalveolar immune cells in patients with COVID-19.”</p>
+<p>This paper was written by Mingfeng Liao, Yang Liu, Jing Yuan, and several others from the Institute of Hepatology in the National Clinical Research Center for Infectious Disease at Shenzhen Third People’s Hospital. It was published on May 12, 2020.</p>
+<p>The focus of this paper was identifying respiratory immune characteristics associated with severe acute respiratory syndrome (SARS)-CoV2, through scRNA-Seq analysis of immune cells from broncheoalveolar lavage fluid. This fluid was collected from patients with varying severity of COVID-19 as well as healthy controls.</p>
+<p><strong>Bronchoalveolar lavage fluid (BALF)</strong> is fluid collected from a lung segment, through a diagnostic technique called bronchoscopy. In bronchoscopy, fluid is squirted into a small part of the lung and is promptly recollected for analysis. After it is collected, BALF mainly contains alveoli secretions (where gas exchange takes place). A typical application for BALF is diagnosing lung disease.</p>
+<p>As COVID-19 is a respiratory disease, performing scRNA-Seq on cells from BALF can yield insights into how this disease affects gene expression of our cells. This paper explicitly states that it examines immune cells. Immune cells have multiple subtypes including macrophages, T cells, and B cells.</p>
+<p><strong>Note: </strong> This paper has raw data from 4 controls and 9 people with COVID-19. For the purposes of this project, I decided to only analyze 3 controls because performing cell alignment on the fourth control (with data from a separate source) caused Excel to crash multiple times.</p>
+<p><span class="math display">\[\\[0in]\]</span></p>
+</div>
+</div>
+<div id="following-along" class="section level1">
+<h1>Following Along</h1>
+<p>If you want to follow along, go to the <a href>GitHub repository for this project</a>. It will contain many files and data that are necessary. Make sure you download the whole thing.</p>
+<div id="r-and-bioconductor" class="section level3">
+<h3>R and Bioconductor</h3>
 </div>
 </div>
 
