@@ -46,15 +46,17 @@ $$\\[0in]$$
 
 # Following Along
 
-If you want to follow along, go to the [GitHub repository for this project](). It will contain many files and data that are necessary. Make sure you download the whole thing. 
+If you want to follow along, go to the [GitHub repository for this project](), called . It will contain many files and data that are necessary. Make sure you download the whole thing. 
 
 After that, do the following:
 
-1. [Download R](https://cloud.r-project.org/). Make sure that the version is the latest R version (4.0.2 as of August 2020).
-2. [Download RStudio](https://rstudio.com/products/rstudio/download/).
-3. [Download 7Zip](https://www.7-zip.org/download.html) as it will easily allow to handle .tar.gz files. If you are on macOS, [Keka](https://www.keka.io/en/) is a great alternative.
+1. [Download and install R](https://cloud.r-project.org/). Make sure that the version is the latest R version (4.0.2 as of August 2020).
+2. [Download and install RStudio](https://rstudio.com/products/rstudio/download/).
+3. [Download and install 7Zip](https://www.7-zip.org/download.html) as it will easily allow to handle .tar.gz files. If you are on macOS, [Keka](https://www.keka.io/en/) is a great alternative.
 
-Once you are in R, install [install Bioconductor](https://www.bioconductor.org/install/) and [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html).
+Once you have installed R and RStudio, go to the 
+
+In R, install [install Bioconductor](https://www.bioconductor.org/install/) and [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html).
 
 ### Packages
 
