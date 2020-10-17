@@ -49,8 +49,18 @@ $$\\[0in]$$
 
 If you want to follow along, go to the [GitHub repository for this project](). It will contain many files and data that are necessary. Make sure you download the whole thing. 
 
-### R and Bioconductor
+Also, download and install R and RStudio if you haven't already done so. Once you are in R, install [install Bioconductor](https://www.bioconductor.org/install/) and [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html). You can also create a new R Script/R Markdown file and save it to the GitHub repository folder you downloaded. 
 
-It is necessary to download and install R for this project.
+### Packages
+
+**Make sure to install all of the following packages before starting Step 1** (you can do this by typing `install.packages("<package name>")` and `BiocManager::install("<package name>")`into the R console for CRAN packages and Bioconductor packages, respectively):
+
+* Seurat (through CRAN)
+* SingleCellExperiment (through Bioconductor)
+* scater (through Bioconductor)
+* scran (through Bioconductor)
+* cluster (through CRAN)
+* PCAtools (through Bioconductor)
+* hdf5r (through CRAN) - if prompted, make sure to say "no" to installing from sources
 
 
