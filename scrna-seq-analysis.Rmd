@@ -51,4 +51,6 @@ If you want to follow along, go to the [GitHub repository for this project](). I
 
 ### R and Bioconductor
 
+It is necessary to download and install R for this project.
+
 
