@@ -22,7 +22,6 @@ In this project, I aim to provide an overview of data analysis associated with *
 
 ### scRNA-Seq
 
-<<<<<<< HEAD
 scRNA-Seq measures the activity of thousands of genes within single cells. It practically accomplishes this by measuring the transcriptome (the sum of mRNA or messenger RNA transcripts) of many single cells, usually from one tissue.
 
 The main goal of scRNA-Seq is to ["characterize heterogeneity across cells"](https://osca.bioconductor.org/feature-selection.html) by measuring gene expression differences between single cells. 
@@ -49,18 +48,52 @@ $$\\[0in]$$
 
 If you want to follow along, go to the [GitHub repository for this project](). It will contain many files and data that are necessary. Make sure you download the whole thing. 
 
-Also, download and install R and RStudio if you haven't already done so. Once you are in R, install [install Bioconductor](https://www.bioconductor.org/install/) and [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html). You can also create a new R Script/R Markdown file and save it to the GitHub repository folder you downloaded. 
+After that, do the following:
+
+1. [Download R](https://cloud.r-project.org/). Make sure that the version is the latest R version (4.0.2 as of August 2020).
+2. [Download RStudio](https://rstudio.com/products/rstudio/download/).
+3. [Download 7Zip](https://www.7-zip.org/download.html) as it will easily allow to handle .tar.gz files. If you are on macOS, [Keka](https://www.keka.io/en/) is a great alternative.
+
+Once you are in R, install [install Bioconductor](https://www.bioconductor.org/install/) and [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html).
 
 ### Packages
 
 **Make sure to install all of the following packages before starting Step 1** (you can do this by typing `install.packages("<package name>")` and `BiocManager::install("<package name>")`into the R console for CRAN packages and Bioconductor packages, respectively):
 
-* Seurat (through CRAN)
-* SingleCellExperiment (through Bioconductor)
-* scater (through Bioconductor)
-* scran (through Bioconductor)
-* cluster (through CRAN)
-* PCAtools (through Bioconductor)
-* hdf5r (through CRAN) - if prompted, make sure to say "no" to installing from sources
+* **Seurat** (through CRAN)
+* **SingleCellExperiment** (through Bioconductor)
+* **scater** (through Bioconductor)
+* **scran** (through Bioconductor)
+* **cluster** (through CRAN)
+* **PCAtools** (through Bioconductor)
+* **hdf5r** (through CRAN) – if prompted, make sure to say "no" to installing from sources
 
+Make sure to say "yes" to updates and additional software that is being downloaded along with these packages.
 
+**Call these packages:**
+
+```{r}
+library(Seurat)
+library(SingleCellExperiment)
+library(scater)
+library(scran)
+library(cluster)
+library(PCAtools)
+library(hdf5r)
+```
+
+$$\\[0in]$$
+
+# Step 1: Preprocessing
+
+### Data Loading
+
+The data we will be working with is an intermediate product of scRNA-Seq – it has already through the initial data processing stages (genome alignment). However, what is most important to know is that our data will contain genes as the rows and cells (from various samples) as the columns.
+
+Our data is listed in NCBI's Gene Expression Omnibus (GEO) under the accession code [GSE145926](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE145926).
+
+Once you have headed to the site, download the supplementary file (at the bottom of the page), "GSE145926_RAW.tar". 
+
+Extract the .tar file and go to the folder with its contents. There, you will find many .h5 and .gz files.
+
+Separate the 12 .h5 files from the 9 .gz files. Put the .h5 files in a separate folder - we do not need the .csv files for this tutorial. Place the folder with the .h5 files in your directory folder.

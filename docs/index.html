@@ -371,7 +371,6 @@ summary {
 
 
 <p><span class="math display">\[\\[0in]\]</span></p>
-<<<<<<< HEAD
 <div id="project-overview" class="section level1">
 <h1>Project Overview</h1>
 <p>In this project, I aim to provide an overview of data analysis associated with <strong>scRNA-Seq (single-cell RNA sequencing)</strong>, by creating cell clustering maps.</p>
@@ -395,17 +394,46 @@ summary {
 <div id="following-along" class="section level1">
 <h1>Following Along</h1>
 <p>If you want to follow along, go to the <a href>GitHub repository for this project</a>. It will contain many files and data that are necessary. Make sure you download the whole thing.</p>
-<div id="r-and-bioconductor" class="section level3">
-<h3>R and Bioconductor</h3>
-=======
-<div id="overview" class="section level1">
-<h1>Overview</h1>
-<p>In this project, my aim is to provide an overview of</p>
-<div id="what-is-scrna-seq" class="section level3">
-<h3>What is scRNA-Seq?</h3>
-<p><strong>scRNA-Seq</strong>, short for single-cell RNA sequencing, is the analysis of transcribed messenger RNA (mRNA) in single cells. Practically, scRNA-Seq involves the process of counting mRNA transcripts of many single cells, usually from one tissue.</p>
-<p>We perform scRNA-Seq because</p>
->>>>>>> 883f2254a428c38e6ef7baab40664ced1aef92c0
+<p>After that, do the following:</p>
+<ol style="list-style-type: decimal">
+<li><a href="https://cloud.r-project.org/">Download R</a>. Make sure that the version is the latest R version (4.0.2 as of August 2020).</li>
+<li><a href="https://rstudio.com/products/rstudio/download/">Download RStudio</a>.</li>
+<li><a href="https://www.7-zip.org/download.html">Download 7Zip</a> as it will easily allow to handle .tar.gz files. If you are on macOS, <a href="https://www.keka.io/en/">Keka</a> is a great alternative.</li>
+</ol>
+<p>Once you are in R, install <a href="https://www.bioconductor.org/install/">install Bioconductor</a> and <a href="https://www.r-project.org/nosvn/pandoc/devtools.html">devtools</a>.</p>
+<div id="packages" class="section level3">
+<h3>Packages</h3>
+<p><strong>Make sure to install all of the following packages before starting Step 1</strong> (you can do this by typing <code>install.packages(&quot;&lt;package name&gt;&quot;)</code> and <code>BiocManager::install(&quot;&lt;package name&gt;&quot;)</code>into the R console for CRAN packages and Bioconductor packages, respectively):</p>
+<ul>
+<li><strong>Seurat</strong> (through CRAN)</li>
+<li><strong>SingleCellExperiment</strong> (through Bioconductor)</li>
+<li><strong>scater</strong> (through Bioconductor)</li>
+<li><strong>scran</strong> (through Bioconductor)</li>
+<li><strong>cluster</strong> (through CRAN)</li>
+<li><strong>PCAtools</strong> (through Bioconductor)</li>
+<li><strong>hdf5r</strong> (through CRAN) – if prompted, make sure to say “no” to installing from sources</li>
+</ul>
+<p>Make sure to say “yes” to updates and additional software that is being downloaded along with these packages.</p>
+<p><strong>Call these packages:</strong></p>
+<pre class="r"><code>library(Seurat)
+library(SingleCellExperiment)
+library(scater)
+library(scran)
+library(cluster)
+library(PCAtools)
+library(hdf5r)</code></pre>
+<p><span class="math display">\[\\[0in]\]</span></p>
+</div>
+</div>
+<div id="step-1-preprocessing" class="section level1">
+<h1>Step 1: Preprocessing</h1>
+<div id="data-loading" class="section level3">
+<h3>Data Loading</h3>
+<p>The data we will be working with is an intermediate product of scRNA-Seq – it has already through the initial data processing stages (genome alignment). However, what is most important to know is that our data will contain genes as the rows and cells (from various samples) as the columns.</p>
+<p>Our data is listed in NCBI’s Gene Expression Omnibus (GEO) under the accession code <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE145926">GSE145926</a>.</p>
+<p>Once you have headed to the site, download the supplementary file (at the bottom of the page), “GSE145926_RAW.tar”.</p>
+<p>Extract the .tar file and go to the folder with its contents. There, you will find many .h5 and .gz files.</p>
+<p>Separate the 12 .h5 files from the 9 .gz files. Put the .h5 files in a separate folder - we do not need the .csv files for this tutorial. Place the folder with the .h5 files in your directory folder.</p>
 </div>
 </div>
 
