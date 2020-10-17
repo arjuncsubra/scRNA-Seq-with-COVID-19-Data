@@ -1,5 +1,10 @@
 ---
 title: "scRNA-Seq Analysis with COVID-19 Data"
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 author: "Arjun Subramanian"
 date: "10/17/2020"
 output: html_document
