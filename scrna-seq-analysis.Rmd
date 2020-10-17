@@ -23,3 +23,5 @@ In this project, my aim is to provide an overview of
 ### What is scRNA-Seq?
 
 **scRNA-Seq**, short for single-cell RNA sequencing, is the analysis of transcribed messenger RNA (mRNA) in single cells. Practically, scRNA-Seq involves the process of counting mRNA transcripts of many single cells, usually from one tissue.
+
+We perform scRNA-Seq because
