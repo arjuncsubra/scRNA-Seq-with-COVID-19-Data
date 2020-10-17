@@ -1,0 +1,20 @@
+---
+title: "scRNA-Seq Analysis with COVID-19 Data"
+author: "Arjun Subramanian"
+date: "10/17/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error=FALSE, warning=FALSE, message=FALSE, results = "hide")
+```
+
+$$\\[0in]$$
+
+# Overview
+
+In this project, my aim is to provide an overview of 
+
+### What is scRNA-Seq?
+
+**scRNA-Seq**, short for single-cell RNA sequencing, is the analysis of transcribed messenger RNA (mRNA) in single cells. Practically, scRNA-Seq involves the process of counting mRNA transcripts of many single cells, usually from one tissue.
