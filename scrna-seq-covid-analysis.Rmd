@@ -46,17 +46,20 @@ $$\\[0in]$$
 
 # Following Along
 
-If you want to follow along, go to the [GitHub repository for this project](), called . It will contain many files and data that are necessary. Make sure you download the whole thing. 
-
+If you want to follow along, go to the [GitHub repository for this project](https://github.com/arjuncsubra/scRNA-Seq-with-COVID-19-Data). Make sure to download the repository and unzip it - it contains a folder called "scRNA-Seq-with-COVID-19-Data-master".
 After that, do the following:
 
 1. [Download and install R](https://cloud.r-project.org/). Make sure that the version is the latest R version (4.0.2 as of August 2020).
 2. [Download and install RStudio](https://rstudio.com/products/rstudio/download/).
 3. [Download and install 7Zip](https://www.7-zip.org/download.html) as it will easily allow to handle .tar.gz files. If you are on macOS, [Keka](https://www.keka.io/en/) is a great alternative.
 
-Once you have installed R and RStudio, go to the 
+Once you have installed R and RStudio, go to the GitHub respository download folder, "scRNA-Seq-with-COVID-19-Data-master". 
 
-In R, install [install Bioconductor](https://www.bioconductor.org/install/) and [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html).
+There, open the R Project file "scrna-seq-covid-project". Create a new R Script/R Markdown document (name it "my-r-file") and save it in "scRNA-Seq-with-COVID-19-Data-master". This is roughly what your main folder should look like:
+
+![](C:/Users/arjun/Documents/checkpoint.PNG)
+
+In R (specifically, in "my-r-file"), install [install Bioconductor](https://www.bioconductor.org/install/) and [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html).
 
 ### Packages
 
@@ -98,4 +101,31 @@ Once you have headed to the site, download the supplementary file (at the bottom
 
 Extract the .tar file and go to the folder with its contents. There, you will find many .h5 and .gz files.
 
-Separate the 12 .h5 files from the 9 .gz files. Put the .h5 files in a separate folder - we do not need the .csv files for this tutorial. Place the folder with the .h5 files in your directory folder.
+Separate the 12 .h5 files from the 9 .gz files. Put the .h5 files in a separate folder (you can name this folder "count-matrices"): we do not need the .gz files for this project. Place the folder with the .h5 files in "scRNA-Seq-with-COVID-19-Data-master". This is what your "count-matrices" folder should look like:
+
+![](C:/Users/arjun/Documents/countmatrices.PNG)
+
+Go back to "my-r-file" (in RStudio) and set your working directory to "count-matrices". You can do this by clicking "Set Working Directory" under the Session tab.
+
+Once that is done, enter the following commands:
+
+```{r}
+c51 <- Read10X_h5("GSM4475048_C51_filtered_feature_bc_matrix.h5")
+c52 <- Read10X_h5("GSM4475049_C52_filtered_feature_bc_matrix.h5")
+c100 <- Read10X_h5("GSM4475050_C100_filtered_feature_bc_matrix.h5")
+c141 <- Read10X_h5("GSM4339769_C141_filtered_feature_bc_matrix.h5")
+c142 <- Read10X_h5("GSM4339770_C142_filtered_feature_bc_matrix.h5")
+c143 <- Read10X_h5("GSM4339771_C143_filtered_feature_bc_matrix.h5")
+c144 <- Read10X_h5("GSM4339772_C144_filtered_feature_bc_matrix.h5")
+c145 <- Read10X_h5("GSM4339773_C145_filtered_feature_bc_matrix.h5")
+c146 <- Read10X_h5("GSM4339774_C146_filtered_feature_bc_matrix.h5")
+c148 <- Read10X_h5("GSM4475051_C148_filtered_feature_bc_matrix.h5")
+c149 <- Read10X_h5("GSM4475052_C149_filtered_feature_bc_matrix.h5")
+c152 <- Read10X_h5("GSM4475053_C152_filtered_feature_bc_matrix.h5")
+```
+
+### Cell Alignment
+
+There is one problem with this data: **many cells do not have complementary metadata** (in this case, cell metadata refers to cell-specific attributes, including the cell type and which person/group the cell came from). With no or incomplete metadata, it is much harder to generate meaningful analyses later onwards.
+
+
