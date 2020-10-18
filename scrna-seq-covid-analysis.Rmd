@@ -131,3 +131,99 @@ There is one problem with this data: **many cells do not have complementary meta
 To resolve this, cells without metadata must be removed.
 
 **Set your working directory to the "cell-alignment" folder in "scRNA-Seq-with-COVID-19-Data-master"** (it contains 12 .csv files starting with "c100numbers.csv"). The following code removes the cells that do not have associated metadata in the individual c objects (c51, c52, etc.).
+
+```{r, }
+c51.keep <- read.csv("c51numbers.csv", header=FALSE)
+c51.vect <- c()
+for (i in c51.keep){c51.vect <- append(c51.vect, i)}
+c51.rev <- c51[,-c51.vect] #c51
+
+c52.keep <- read.csv("c52numbers.csv", header=FALSE)
+c52.vect <- c()
+for (i in c52.keep){c52.vect <- append(c52.vect, i)}
+c52.rev <- c52[,-c52.vect] #c52
+
+c100.keep <- read.csv("c100numbers.csv", header=FALSE)
+c100.vect <- c()
+for (i in c100.keep){c100.vect <- append(c100.vect, i)}
+c100.rev <- c100[,-c100.vect] #c100
+
+c141.keep <- read.csv("c141numbers.csv", header=FALSE)
+c141.vect <- c()
+for (i in c141.keep){c141.vect <- append(c141.vect, i)}
+c141.rev <- c141[,-c141.vect] #c141
+
+c142.keep <- read.csv("c142numbers.csv", header=FALSE)
+c142.vect <- c()
+for (i in c142.keep){c142.vect <- append(c142.vect, i)}
+c142.rev <- c142[,-c142.vect] #c142
+
+c144.keep <- read.csv("c144numbers.csv", header=FALSE)
+c144.vect <- c()
+for (i in c144.keep){c144.vect <- append(c144.vect, i)}
+c144.rev <- c144[,c144.vect] #c144
+
+c143.keep <- read.csv("c143numbers.csv", header=FALSE)
+c143.vect <- c()
+for (i in c143.keep){c143.vect <- append(c143.vect, i)}
+c143.rev <- c143[,-c143.vect] #c143
+
+c145.keep <- read.csv("c145numbers.csv", header=FALSE)
+c145.vect <- c()
+for (i in c145.keep){c145.vect <- append(c145.vect, i)}
+c145.rev <- c145[,-c145.vect] #c145
+
+c146.keep <- read.csv("c146numbers.csv", header=FALSE)
+c146.vect <- c()
+for (i in c146.keep){c146.vect <- append(c146.vect, i)}
+c146.rev <- c146[,-c146.vect] #c146
+
+c148.keep <- read.csv("c148numbers.csv", header=FALSE)
+c148.vect <- c()
+for (i in c148.keep){c148.vect <- append(c148.vect, i)}
+c148.rev <- c148[,-c148.vect] #c148
+
+c149.keep <- read.csv("c149numbers.csv", header=FALSE)
+c149.vect <- c()
+for (i in c149.keep){c149.vect <- append(c149.vect, i)}
+c149.rev <- c149[,-c149.vect] #c149
+
+c152.keep <- read.csv("c152numbers.csv", header=FALSE)
+c152.vect <- c()
+for (i in c152.keep){c152.vect <- append(c152.vect, i)}
+c152.rev <- c152[,-c152.vect] #c152
+```
+
+### Count Matrix Construction
+
+Now that we have streamlined the number of cells in each sample, we need to merge the samples into a large count matrix with rows as genes and columns as individual cells.
+
+To do this, all of our samples must have the same number of rows and columns. We have to remove the last row from the following samples to make this possible (this has no effect on our analyses):
+
+```{r}
+c141.rev.2 <- c141.rev[-nrow(c141.rev),]
+c142.rev.2 <- c142.rev[-nrow(c142.rev),]
+c143.rev.2 <- c143.rev[-nrow(c143.rev),]
+c144.rev.2 <- c144.rev[-nrow(c144.rev),]
+c145.rev.2 <- c145.rev[-nrow(c145.rev),]
+c146.rev.2 <- c146.rev[-nrow(c146.rev),]
+c148.rev.2 <- c148.rev[-nrow(c148.rev),]
+c149.rev.2 <- c149.rev[-nrow(c149.rev),]
+c152.rev.2 <- c152.rev[-nrow(c152.rev),]
+```
+
+These samples can be merged into a large count matrix. **Make sure to add in c144 before c143 due to the order of the metadata:**
+
+```{r}
+dgcmatrix.combined <- cbind(c51.rev,c52.rev,c100.rev)
+dgcmatrix.combined <- cbind(dgcmatrix.combined, c141.rev.2, c142.rev.2)
+dgcmatrix.combined <- cbind(dgcmatrix.combined, c144.rev.2, c143.rev.2)
+dgcmatrix.combined <- cbind(dgcmatrix.combined, c145.rev.2, c146.rev.2)
+dgcmatrix.combined <- cbind(dgcmatrix.combined, c148.rev.2, c149.rev.2)
+dgcmatrix.combined <- cbind(dgcmatrix.combined, c152.rev.2)
+```
+
+$$\\[0in]$$
+
+# Step 2: Metadata to SingleCellExperiment
+
