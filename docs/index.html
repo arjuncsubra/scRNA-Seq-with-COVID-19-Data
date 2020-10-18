@@ -463,7 +463,7 @@ c152 &lt;- Read10X_h5(&quot;GSM4475053_C152_filtered_feature_bc_matrix.h5&quot;)
 </div>
 <div id="cell-alignment" class="section level3">
 <h3>Cell Alignment</h3>
-<p>There is one problem with this data: <strong>many cells do not have complementary metadata</strong> (in this case, cell metadata refers to cell-specific attributes, including the cell type and which person/group the cell came from). With no or incomplete metadata, it is much harder to generate meaningful analyses later onwards.</p>
+<p>There is one problem with this data: many cells do not have complementary metadata (in this case, cell metadata refers to cell-specific attributes, including the cell type and which person/group the cell came from). With no or incomplete metadata, it is much harder to generate meaningful analyses later onwards.</p>
 <p>To resolve this, cells without metadata must be removed.</p>
 <p><strong>Set your working directory to the “cell-alignment” folder in “scRNA-Seq-with-COVID-19-Data-master”</strong> (it contains 12 .csv files starting with “c100numbers.csv”). The following code removes the cells that do not have associated metadata in the individual c objects (c51, c52, etc.).</p>
 <pre class="r"><code>c51.keep &lt;- read.csv(&quot;c51numbers.csv&quot;, header=FALSE)
@@ -551,6 +551,48 @@ dgcmatrix.combined &lt;- cbind(dgcmatrix.combined, c152.rev.2)</code></pre>
 </div>
 <div id="step-2-metadata-to-singlecellexperiment" class="section level1">
 <h1>Step 2: Metadata to SingleCellExperiment</h1>
+<p>Now, we can create an intermediate <a href="https://github.com/satijalab/seurat/wiki#:~:text=Object%20Overview,manipulation%20of%20single%2Dcell%20data.&amp;text=The%20Assay%20objects%20are%20designed,hashtags%2C%20or%20imputed%20gene%20values.">Seurat object</a>, which allows us to easily add our metadata along with our count matrix. A Seurat object is essentially one type of container for storing single-cell data.</p>
+<p>Before running the following code, <strong>change your working directory back to “scRNA-Seq-with-COVID-19-Data-master”, the folder you downloaded from GitHub.</strong></p>
+<pre class="r"><code>metadata.seu &lt;- read.csv(&quot;cell.metadata.csv&quot;, row.names=1)
+seu &lt;- CreateSeuratObject(counts=dgcmatrix.combined, assay=&quot;RNA&quot;, meta.data=metadata.seu) </code></pre>
+<p>We can view the metadata to confirm that it has loaded properly:</p>
+<pre class="r"><code>seu@meta.data</code></pre>
+<pre><code>##                       orig.ident nCount_RNA nFeature_RNA sample sample_new
+## AAACCTGAGACACTAA-1 SeuratProject       5228         1635    C51        HC1
+## AAACCTGAGGAGTACC-1 SeuratProject       5072         1386    C51        HC1
+## AAACCTGAGGATATAC-1 SeuratProject       5531         1729    C51        HC1
+## AAACCTGAGGTCATCT-1 SeuratProject       5630         1639    C51        HC1
+## AAACCTGCACGGATAG-1 SeuratProject       7358         1722    C51        HC1
+##                    group disease hasnCoV cluster    celltype
+## AAACCTGAGACACTAA-1    HC       N       N       3 Macrophages
+## AAACCTGAGGAGTACC-1    HC       N       N       3 Macrophages
+## AAACCTGAGGATATAC-1    HC       N       N       3 Macrophages
+## AAACCTGAGGTCATCT-1    HC       N       N       3 Macrophages
+## AAACCTGCACGGATAG-1    HC       N       N       5 Macrophages
+##  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 63098 rows ]</code></pre>
+<div id="seurat-to-singlecellexperiment" class="section level3">
+<h3>Seurat to SingleCellExperiment</h3>
+<p>Another type of container for storing single-cell data is the SingleCellExperiment object, which we will be using to further analyze and explore our data.</p>
+<p>Fortunately, we can easily convert our Seurat object to a SingleCellExperiment object:</p>
+<pre class="r"><code>sce &lt;- as.SingleCellExperiment(seu)</code></pre>
+<p>We can view sce:</p>
+<pre class="r"><code>sce</code></pre>
+<pre><code>## class: SingleCellExperiment 
+## dim: 33538 63103 
+## metadata(0):
+## assays(2): counts logcounts
+## rownames(33538): MIR1302-2HG FAM138A ... AC213203.1 FAM231C
+## rowData names(0):
+## colnames(63103): AAACCTGAGACACTAA-1 AAACCTGAGGAGTACC-1 ...
+##   TTTGTCAGTCTGCAAT-1 TTTGTCAGTGTTGGGA-1
+## colData names(11): orig.ident nCount_RNA ... celltype ident
+## reducedDimNames(0):
+## altExpNames(0):</code></pre>
+<p><span class="math display">\[\\[0in]\]</span></p>
+</div>
+</div>
+<div id="step-3-data-operations" class="section level1">
+<h1>Step 3: Data Operations</h1>
 </div>
 
 

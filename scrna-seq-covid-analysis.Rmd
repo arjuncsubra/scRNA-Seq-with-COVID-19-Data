@@ -126,7 +126,7 @@ c152 <- Read10X_h5("GSM4475053_C152_filtered_feature_bc_matrix.h5")
 
 ### Cell Alignment
 
-There is one problem with this data: **many cells do not have complementary metadata** (in this case, cell metadata refers to cell-specific attributes, including the cell type and which person/group the cell came from). With no or incomplete metadata, it is much harder to generate meaningful analyses later onwards.
+There is one problem with this data: many cells do not have complementary metadata (in this case, cell metadata refers to cell-specific attributes, including the cell type and which person/group the cell came from). With no or incomplete metadata, it is much harder to generate meaningful analyses later onwards.
 
 To resolve this, cells without metadata must be removed.
 
@@ -227,3 +227,38 @@ $$\\[0in]$$
 
 # Step 2: Metadata to SingleCellExperiment
 
+Now, we can create an intermediate [Seurat object](https://github.com/satijalab/seurat/wiki#:~:text=Object%20Overview,manipulation%20of%20single%2Dcell%20data.&text=The%20Assay%20objects%20are%20designed,hashtags%2C%20or%20imputed%20gene%20values.), which allows us to easily add our metadata along with our count matrix. A Seurat object is essentially one type of container for storing single-cell data.
+
+Before running the following code, **change your working directory back to "scRNA-Seq-with-COVID-19-Data-master", the folder you downloaded from GitHub.**
+
+```{r}
+metadata.seu <- read.csv("cell.metadata.csv", row.names=1)
+seu <- CreateSeuratObject(counts=dgcmatrix.combined, assay="RNA", meta.data=metadata.seu) 
+```
+
+We can view the metadata to confirm that it has loaded properly:
+
+```{r, results="markup",R.options=list(max.print=50)}
+seu@meta.data
+```
+
+### Seurat to SingleCellExperiment
+
+Another type of container for storing single-cell data is the SingleCellExperiment object, which we will be using to further analyze and explore our data. 
+
+Fortunately, we can easily convert our Seurat object to a SingleCellExperiment object:
+
+
+```{r}
+sce <- as.SingleCellExperiment(seu)
+```
+
+We can view sce:
+
+```{r, results="markup"}
+sce
+```
+
+$$\\[0in]$$
+
+# Step 3: Data Operations
