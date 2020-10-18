@@ -683,6 +683,7 @@ $$\\[0in]$$
 Based on our dimensionality reduction plots (PCA, T-SNE, UMAP), all three showed a significant difference (expressed by distance, in the graphs) in the expression profiles of macrophages when comparing COVID-19 patients and the control group. A significant difference was even apparent when comparing macrophages from moderate and severe COVID-19 patients.
 
 In the abstract of the paper associated with this data, the authors stated two main conclusions:
+
 * Proinflammatory monocyte-derived macrophages were abundant in lavage fluid from patients with severe COVID-19.
 * Highly clonally expanded CD8+ T cells were abundant in lavage fluid from moderate COVID-19 patients.
 
