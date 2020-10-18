@@ -38,7 +38,7 @@ The focus of this paper was identifying respiratory immune characteristics assoc
 
 **Bronchoalveolar lavage fluid (BALF)** is fluid collected from a lung segment, through a diagnostic technique called bronchoscopy. In bronchoscopy, fluid is squirted into a small part of the lung and is promptly recollected for analysis. After it is collected, BALF mainly contains alveoli secretions (where gas exchange takes place). A typical application for BALF is diagnosing lung disease.
 
-As COVID-19 is a respiratory disease, performing scRNA-Seq on cells from BALF can yield insights into how this disease affects gene expression of our cells. This paper explicitly states that it examines immune cells. Immune cells have multiple subtypes including macrophages, T cells, and B cells.
+As COVID-19 is a respiratory disease, performing scRNA-Seq on cells from BALF can yield insights into how this disease affects gene expression of our cells. This paper explicitly states that it examines immune cells. Immune cells have multiple subtypes including macrophages, T cells, and B cells – it is important to distinguish between these cell types, as each type peforms a different function.
 
 **Note: ** This paper has raw data from 4 controls and 9 people with COVID-19. For the purposes of this project, I decided to only analyze 3 controls because performing cell alignment on the fourth control (with data from a separate source) caused Excel to crash multiple times. 
 
@@ -47,19 +47,20 @@ $$\\[0in]$$
 # Following Along
 
 If you want to follow along, go to the [GitHub repository for this project](https://github.com/arjuncsubra/scRNA-Seq-with-COVID-19-Data). Make sure to download the repository and unzip it - it contains a folder called "scRNA-Seq-with-COVID-19-Data-master".
+
 After that, do the following:
 
-1. [Download and install R](https://cloud.r-project.org/). Make sure that the version is the latest R version (4.0.2 as of August 2020).
+1. [Download and install R](https://cloud.r-project.org/).
 2. [Download and install RStudio](https://rstudio.com/products/rstudio/download/).
 3. [Download and install 7Zip](https://www.7-zip.org/download.html) as it will easily allow to handle .tar.gz files. If you are on macOS, [Keka](https://www.keka.io/en/) is a great alternative.
 
 Once you have installed R and RStudio, go to the GitHub respository download folder, "scRNA-Seq-with-COVID-19-Data-master". 
 
-There, open the R Project file "scrna-seq-covid-project". Create a new R Script/R Markdown document (name it "my-r-file") and save it in "scRNA-Seq-with-COVID-19-Data-master". This is roughly what your main folder should look like:
+There, open the R Project file "scrna-seq-covid-project" in RStudio. Create a new R Script/R Markdown document (name it "my-r-file") and save it in "scRNA-Seq-with-COVID-19-Data-master". This is roughly what your main folder should look like:
 
 ![](C:/Users/arjun/Documents/checkpoint.PNG)
 
-In R (specifically, in "my-r-file"), install [install Bioconductor](https://www.bioconductor.org/install/) and [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html).
+In R (specifically, in "my-r-file"), install [Bioconductor](https://www.bioconductor.org/install/) and [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html).
 
 ### Packages
 
@@ -72,7 +73,6 @@ In R (specifically, in "my-r-file"), install [install Bioconductor](https://www.
 * **cluster** (through CRAN)
 * **PCAtools** (through Bioconductor)
 * **hdf5r** (through CRAN) – if prompted, make sure to say "no" to installing from sources
-* **AnnotationHub** (through Bioconductor)
 
 Make sure to say "yes" to updates and additional software that is being downloaded along with these packages.
 
@@ -86,7 +86,6 @@ library(scran)
 library(cluster)
 library(PCAtools)
 library(hdf5r)
-library(AnnotationHub)
 ```
 
 $$\\[0in]$$
@@ -107,7 +106,7 @@ Separate the 12 .h5 files from the 9 .gz files. Put the .h5 files in a separate 
 
 ![](C:/Users/arjun/Documents/countmatrices.PNG)
 
-Go back to "my-r-file" (in RStudio) and set your working directory to "count-matrices". You can do this by clicking "Set Working Directory" under the Session tab.
+Go back to "my-r-file" (in RStudio) and set your working directory to "count-matrices". You can do this by clicking "Set Working Directory" under the Session tab in RStudio.
 
 Once that is done, enter the following commands:
 
@@ -126,9 +125,11 @@ c149 <- Read10X_h5("GSM4475052_C149_filtered_feature_bc_matrix.h5")
 c152 <- Read10X_h5("GSM4475053_C152_filtered_feature_bc_matrix.h5")
 ```
 
+These commands help us read the .h5 files, which are not readable by any default Windows application. These files are the foundation of our count matrix, the raw data that shows gene expression levels for each cell. 
+
 ### Cell Alignment
 
-There is one problem with this data: many cells do not have complementary metadata (in this case, cell metadata refers to cell-specific attributes, including the cell type and which person/group the cell came from). With no or incomplete metadata, it is much harder to generate meaningful analyses later onwards.
+There is one problem with this data: many cells do not have complementary metadata (in this case, cell metadata refers to cell-specific attributes, including the cell type and which person/group the cell came from). With no or incomplete metadata, it is much harder to generate meaningful analyses later onward.
 
 To resolve this, cells without metadata must be removed.
 
@@ -200,7 +201,7 @@ c152.rev <- c152[,-c152.vect] #c152
 
 Now that we have streamlined the number of cells in each sample, we need to merge the samples into a large count matrix with rows as genes and columns as individual cells.
 
-To do this, all of our samples must have the same number of rows and columns. We have to remove the last row from the following samples to make this possible (this has no effect on our analyses):
+To do this, all of our samples must have the same number of rows and columns. We have to remove the last row from the following samples to make this possible (this has no negative effect on our analyses):
 
 ```{r}
 c141.rev.2 <- c141.rev[-nrow(c141.rev),]
@@ -214,7 +215,7 @@ c149.rev.2 <- c149.rev[-nrow(c149.rev),]
 c152.rev.2 <- c152.rev[-nrow(c152.rev),]
 ```
 
-These samples can be merged into a large count matrix. **Make sure to add in c144 before c143 due to the order of the metadata:**
+We will merge all of these files into a large count matrix, "dgcmatrix.combined". **Make sure to add in c144 before c143 due to the order of the metadata:**
 
 ```{r}
 dgcmatrix.combined <- cbind(c51.rev,c52.rev,c100.rev)
@@ -262,6 +263,58 @@ sce
 ```
 
 $$\\[0in]$$
+To save our RAM, we can remove the various objects that we are not using anymore from our memory:
+
+```{r}
+rm(dgcmatrix.combined)
+rm(seu)
+rm(c100)
+rm(c100.keep)
+rm(c100.rev)
+rm(c141)
+rm(c141.keep)
+rm(c141.rev)
+rm(c141.rev.2)
+rm(c142)
+rm(c142.keep)
+rm(c142.rev)
+rm(c142.rev.2)
+rm(c143)
+rm(c143.keep)
+rm(c143.rev)
+rm(c143.rev.2)
+rm(c144)
+rm(c144.keep)
+rm(c144.rev)
+rm(c144.rev.2)
+rm(c145)
+rm(c145.keep)
+rm(c145.rev)
+rm(c145.rev.2)
+rm(c146)
+rm(c146.keep)
+rm(c146.rev)
+rm(c146.rev.2)
+rm(c148)
+rm(c148.keep)
+rm(c148.rev)
+rm(c148.rev.2)
+rm(c149)
+rm(c149.keep)
+rm(c149.rev)
+rm(c149.rev.2)
+rm(c152)
+rm(c152.keep)
+rm(c152.rev)
+rm(c152.rev.2)
+rm(c51)
+rm(c51.keep)
+rm(c51.rev)
+rm(c52)
+rm(c52.keep)
+rm(c52.rev)
+```
+
 
 # Step 3: Data Operations
 
@@ -269,9 +322,9 @@ We have created a SingleCellExperiment object, which is ready for further data p
 
 ### Quality Control
 
-First, we will run **quality control (QC)** on our data. This ensures that we remove low-quality cells in our SingleCellExperiment object. If unaddressed, low-quality cells often distort the results we obtain from later steps in the analysis. For instance, such cells can form distinct clusters that do not reflect actual patterns in gene expression.
+First, we will run **quality control (QC)** on our data. This ensures that we remove low-quality cells in our sce object. If present, low-quality cells often distort the results we obtain from later steps in scRNA-Seq analysis. For instance, such cells can form distinct clusters that do not reflect actual patterns in gene expression.
 
-A common type of low quality cells is those with few expressed genes (in other words, scRNA-Seq failed to capture diversity in transcripts). Another common source of low-quality cells are those with high proportions of mitochondrial RNA. 
+A common type of low quality cells are those with few expressed genes (in other words, scRNA-Seq failed to capture gene expression diversity for those cells). Another common source of low-quality cells are those with high proportions of mitochondrial RNA. 
 
 We can start quality control by identifying mitochondrial genes:
 
@@ -280,14 +333,14 @@ location <- rowRanges(sce)
 is.mito <- any(seqnames(location)=="MT")
 ```
 
-We can now add QC statistics for each cell to the SingleCellExperiment object:
+We can now add QC statistics for each cell to sce:
 
 ```{r}
 df <- perCellQCMetrics(sce, subsets=list(Mito=is.mito))
 df
 ```
 
-Based on these statistics, we can identify what cells we will discard. We are discarding outlier cells (generally calculated by being more than 3 median absolute deviations from the median) when it comes to library sizes, expressed genes, and mitochondrial RNA.
+Based on these statistics, we can identify what cells we will discard. We are discarding outlier cells (generally calculated by being more than 3 median absolute deviations from the median) when it comes to library sizes, expressed genes, and mitochondrial RNA:
 
 ```{r}
 qc.lib <- isOutlier(df$sum, log=TRUE, type="lower")
@@ -303,15 +356,15 @@ We can view a summary of these outliers:
 DataFrame(LibSize=sum(qc.lib), NExprs=sum(qc.nexprs), MitoProp=sum(qc.mito), Total=sum(discard))
 ```
 
-Now, these outliers can be removed from our SingleCellExperiment:
+Now, these outliers can be removed from our sce object:
 
 ```{r, results="markup"}
-filtered <- sce[,!discard]
-filtered
+sce <- sce[,!discard]
+sce
 ```
 ### Normalization and Feature Selection
 
-We can now log-transform our counts. Log-transformation typically reduces skew in data (helping it conform better to a normal distribution):
+We can now log-transform our expression counts. Log-transformation typically reduces skew in data, helping it conform better to a normal distribution:
 
 ```{r}
 sce <- logNormCounts(sce)
@@ -331,4 +384,328 @@ We can now select our top HVGs. I selected a numeric value (instead of a proport
 hvg <- getTopHVGs(dec, n=1000)
 ```
 
+$$\\[0in]$$
 
+# Step 4: Dimensionality Reduction
+
+Suppose our data only had two genes, "Gene A" and "Gene B" (but the same amount of cells). We could create a representation where each axis represents the expression of one gene.
+
+Consequently, we could plot the 60000 plus cells in our data in those two dimensions based on the expression levels of "Gene A" and "Gene B". 
+
+Now, scale this representation up to the number of genes we have in our data: 33538. This would mean that our representation contains 33538 dimensions.
+
+Unfortunately, we cannot interpret a plot with 33538 dimensions. To remedy this, we must reduce the number of dimensions. This is done in many ways, including compression of multiple genes into a single dimension. The major risk when reducing dimensions is loss of biological insights (in exchange for a more interpretable plot).  
+
+We will explore 3 methods of dimensionality reduction in this project: PCA, T-SNE, and UMAP.
+
+##### Principal Component Analysis (PCA)
+
+One method of dimensionality reduction is Principal Component Analysis, or PCA. 
+
+From the high dimensional space, PCA essentially finds out the axes that capture the largest amount of variation among cells. These axes are called principal components (PCs). Practically, the top PCs capture a large amount of expression differences (variance) so there are diminishing returns once a certain amount of PCs are selected. 
+
+To start PCA analysis, we must set a seed. This is important because it allows us to reproduce our results, even with many algorithms that are based on randomization.
+
+```{r}
+set.seed(1234)
+```
+
+Now that we have set the seed, we can run PCA on our sce object:
+
+```{r}
+sce <- runPCA(sce, subset_row=hvg)
+```
+
+We can now perform some diagnostics on our PCA results, informing us on how to adjust the number of PCs:
+
+```{r}
+percent.var <- attr(reducedDim(sce),"percentVar")
+chosen.elbow <- findElbowPoint(percent.var)
+```
+
+```{r, results="markup"}
+chosen.elbow
+```
+Our previous code identifies the elbow in the curve of a scree plot (with percent of variance explained in the y-axis and number of PCs in the x-axis). The elbow point measures the number of PCs where a significant portion of the gene variation is explained. Practically, adding more PCs past the elbow point leads to diminishing returns.
+
+We can view the elbow point (5 PCs) graphically below:
+
+```{r, results="markup"}
+plot(percent.var, xlab="PC", ylab="Variance explained (%)")
+abline(v=chosen.elbow, col="red")
+```
+
+We can accordingly subset our PCA results:
+
+```{r}
+reducedDim(sce, "PCA") <- reducedDim(sce, "PCA")[,1:5]
+```
+
+Now, we can plot the results of our PCA results, colored by cell type:
+
+```{r, results="markup"}
+plotPCA(sce, colour_by = "celltype")
+```
+
+This graph focuses on all of the cells in the sce object. It is apparent that similar cell types have similar expression profiles: this results in distinct groupings of green, blue, and orange dots, just to name a few colors.
+
+To obtain targeted graphs, we can plot subsets of our data:
+
+```{r}
+sce.severe <- sce[, sce$group == "S"] #subset indicating cells from patients with severe COVID-19 infection
+sce.moderate <- sce[, sce$group == "M"] #subset indicating cells from patients with moderate COVID-19 infection
+sce.covid <- sce[, sce$disease == "Y"] #subset indicating cells from patients with COVID-19
+sce.control <- sce[, sce$disease == "N"] #subset indicating cells from patients without COVID-19
+```
+
+We can plot two graphs to compare PCA plots between those affected by COVID-19 and a control group:
+
+```{r, results="markup"}
+plotPCA(sce.covid, colour_by = "celltype")
+plotPCA(sce.control, colour_by = "celltype")
+```
+
+We can see two different groups of macrophages (in green) that barely overlap between control and COVID-19 groups. Also apparent is the much higher frequency of B, epithelial, and T cells in the COVID-19 plot.
+
+Another comparative PCA plot we can graph is between those affected by severe and moderate COVID-19:
+
+```{r, results="markup"}
+plotPCA(sce.severe, colour_by = "celltype")
+plotPCA(sce.moderate, colour_by = "celltype")
+```
+
+The difference between these two plots is less obvious than the last two (COVID vs control). Interestingly, we can see significantly more neutrophil cells (in brown and on the left) expressed in the severe PCA plot. The same is generally true for plasma cells, although this trend is not very conspicuous with PCA plots. However, many cell types do not form distinct clusters when comparing these two groups. These overlapping groups include macrophages, epithelial cells, and T cells. 
+
+### T-Distributed Stochaistic Neighbor Embedding (T-SNE)
+
+PCA is one way to reduce the high-dimensional data to something we can interpret a little better.
+
+Another dimensionality reduction method is T-SNE, or T-Distributed Stochaistic Neighbor Embedding. 
+
+The aim of T-SNE is finding a low-dimensional data representation that preserves the distances between each point in the higher dimension. Practically, this results in the formation of distinct clusters (of cells that are more similar to one in terms of expression profiles).
+
+We can run TSNE on our sce object. Setting the seed is important here, too:
+
+```{r}
+set.seed(00101001101)
+sce <- runTSNE(sce, dimred="PCA")
+```
+
+You might have noticed that t-SNE analysis took significantly longer than PCA. This is because it is computationally more intense.
+
+To continue, we can subset our sce object in the same way as we did in the PCA section:
+
+```{r}
+sce.severe <- sce[, sce$group == "S"] #subset indicating cells from patients with severe COVID-19 infection
+sce.moderate <- sce[, sce$group == "M"] #subset indicating cells from patients with moderate COVID-19 infection
+sce.covid <- sce[, sce$disease == "Y"] #subset indicating cells from patients with COVID-19
+sce.control <- sce[, sce$disease == "N"] #subset indicating cells from patients without COVID-19
+```
+
+First we will plot the whole dataset, like in the PCA section. This time, we will color it by celltype and disease (COVID-19 or control):
+
+```{r, results="markup"}
+plotReducedDim(sce, dimred="TSNE", colour_by="celltype")
+plotReducedDim(sce, dimred="TSNE", colour_by="disease")
+```
+
+Compared to the PCA plot, the TSNE plot has more defined groupings. For instance, in the first plot (colored by cell type), macrophages are split into three groups. According to the second plot (colored by disease), the right-most grouping (colored in blue) indicates cells, mainly macrophages from the control group. Based on this plot, there is a clear separation (in terms of gene expression profiles) between the macrophages of those who suffer from COVID-19 and the control group.
+
+Along these lines, we can perform a second T-SNE plot using our subsetted sce objects. Specifically, we can compare the plots for severe and moderate COVID-19 patients (colored by cell type):
+
+```{r, results="markup"}
+par(mfrow=c(1,2))
+plotReducedDim(sce.severe, dimred="TSNE", colour_by="celltype")
+plotReducedDim(sce.moderate, dimred="TSNE", colour_by="celltype")
+```
+
+Although there are a number of similarities between the moderate and severe T-SNE plot, there is one significant difference: macrophage grouping. A majority of the macrophages from the moderate T-SNE plot cluster together around the bottom right (with some around the center), while the overwhelming majority of the macrophages from the severe T-SNE plot center around the bottom to center left (forming a large, distinctly green figure). There is also almost a total absence of plasma cells in the moderate plot, while a small but dense grouping plasma cells cluster around the top of the graph for the severe plot.
+
+## Uniform Manifold Approximation and Projection (UMAP)
+
+The final method of dimensionality reduction is UMAP, or Uniform Manifold Approximation and Projection. 
+
+In principle, UMAP is similar to T-SNE as it also tries to preserve the distances between cells from the high dimensional space in lower dimensions. Practically, UMAP takes less time than T-SNE, while resulting in more compact clusters than T-SNE.
+
+Make sure to set the seed for UMAP analysis as it also involves algorithms that are based on randomization.
+
+```{r}
+set.seed(1100101001)
+sce <- runUMAP(sce, dimred='PCA')
+```
+
+Subsetting is necessary here, too:
+
+```{r}
+sce.severe <- sce[, sce$group == "S"] #subset indicating cells from patients with severe COVID-19 infection
+sce.moderate <- sce[, sce$group == "M"] #subset indicating cells from patients with moderate COVID-19 infection
+sce.covid <- sce[, sce$disease == "Y"] #subset indicating cells from patients with COVID-19
+sce.control <- sce[, sce$disease == "N"] #subset indicating cells from patients without COVID-19
+```
+
+Our first UMAP plot will represent the whole dataset, colored by cell type:
+
+```{r, results="markup"}
+plotReducedDim(sce, dimred="UMAP", colour_by="celltype")
+```
+
+Our second UMAP plot will represent the whole dataset, colored by disease:
+
+```{r, results="markup"}
+plotReducedDim(sce, dimred="UMAP", colour_by="disease")
+```
+
+Based on these two plots, the cells from the control group make a distinct cluster on the right (blue in the second plot). This cluster is comprised mainly of macrophages. Macrophages as a cell type are into 3 groupings in the top plot (echoing the T-SNE plot).
+
+One could say that this UMAP plot echoes both T-SNE and PCA with even more distant, defined clusters. 
+
+Our third and fourth plots will use our subsetted data, comparing cells from moderate and severe COVID-19 patients:
+
+```{r, results="markup"}
+par(mfrow=c(1,2))
+plotReducedDim(sce.severe, dimred="UMAP", colour_by="celltype")
+plotReducedDim(sce.moderate, dimred="UMAP", colour_by="celltype")
+```
+
+We can see a similar pattern in these plots when compared to the respective T-SNE (and PCA) plots: the macrophages of moderate COVID-19 patients generally clustered in a dense grouping in the top right of the plot, while the macrophages of the severe COVID-19 patients were distributed across the top left area of the plot. Plasma cells (yellow) are also seen significantly more in the severe plot.
+
+# Step 4: Clustering
+
+These groupings are called clusters, and the process of generating them is called **clustering**. 
+
+**Clustering can be thought of as a way of viewing data that that is more or less similar to other data.** In the case of this dataset, clustering could correspond to cell types or other factors that make cells similar. Similarity, however, can be adjusted while clustering.
+
+We will be exploring two different types of clustering in this document: 
+
+* Graph-based clustering
+* K-means clustering
+
+### Graph-Based Clustering
+
+The first type of clustering we will explore in this document is graph-based clustering. 
+
+Graph-based clustering involves building a graph where each cell is connected to its closest neighbors in a higher-dimensional space. These connections, or edges, are weighted based on how similar cells are (more weight is given to similar cells). Then, computation is applied to identify various cell communities or clusters.
+
+To start off, we can use the following code to construct the graph where cells are connected to a certain number of nearest neighbors. I chose 10 but this number can be adjusted).
+
+```{r}
+g <- buildSNNGraph(sce, k=10, use.dimred = 'PCA')
+clust <- igraph::cluster_walktrap(g)$membership
+```
+
+We can view clust below:
+
+```{r, results="markup"}
+table(clust)
+```
+
+We can assign the cluster assignments into our sce object as metadata, allowing us to visualize our newly-made clusters on our existing dimensionality reduction plots.
+
+We will start with T-SNE:
+
+```{r, results="markup"}
+colLabels(sce) <- factor(clust)
+plotReducedDim(sce, "TSNE", colour_by="label")
+```
+
+We can do the same thing with a UMAP/PCA plot:
+
+```{r, results="markup"}
+plotReducedDim(sce, "UMAP", colour_by="label")
+```
+
+It is even possible to visualize the nearest-neighbor graph:
+
+```{r, results="markup"}
+set.seed(2000)
+reducedDim(sce, "force") <- igraph::layout_with_fr(g)
+plotReducedDim(sce, colour_by="label", dimred="force")
+```
+
+In all three of these plots, the graph-based clustering method we used determined that there were 38 clusters. This is not to say that there are 38 biologically defined groups; there aren't.  
+
+Although the color scheme and sheer number of clusters make it difficult to distinguish between certain groups, cluster #1 appears in all areas except for the top right grouping (which, as we saw in T-SNE, was the control group). The majority of that top right grouping also is a color that is not seen in other parts of the graph.
+
+### K-Means Clustering
+
+The second type of clustering we will explore in this document is k-means clustering. 
+
+K-means clustering allows the user to choose the number of clusters. The user can control this by choosing the number of cluster centers. 
+
+Suppose we pick 10 centers, or centroids. The K-means algorithm selects the location of these centroids as the initial cluster centers. It then keeps refining the location of the cluster centers to match the points better and better (minimizing the within-cluster sum of squares).
+
+In other words, K-means clustering involves initial random selection of centroids but the aim is reduction of within-cluster variances.
+
+We can start k-means analysis with 10 centers or clusters:
+
+```{r, results="markup"}
+set.seed(100)
+clust.kmeans <- kmeans(reducedDim(sce, "PCA"),centers=10)
+table(clust.kmeans$cluster)
+```
+
+We can plot our T-SNE dimensional reduction using our newly generated clusters as the labels, in a similar fashion to graph-based clustering:
+
+```{r, results="markup"}
+colLabels(sce) <- factor(clust.kmeans$cluster)
+plotReducedDim(sce, "TSNE", colour_by="label")
+```
+
+An intentional method used by some people is setting k to a large enough value to avoid overclustering.
+
+When comparing the K-means clustering map above to the T-SNE plots we did in Step 3, we can see that Cluster 9 roughly corresponds to macrophages from moderate COVID-19 patients. Cluster 6 approximately corresponds to epithelial cells and plasma cells from severe COVID-19 patients. Cluster 4 roughly outlines T-cells from both moderate and severe COVID-19 patients. Cluster 8 could correspond to neutrophils found in severe COVID-19 patients.
+
+Clusters 3, 7, and 10 correspond to the large group of macrophages from severe COVID-19 patients. Clusters 2 and 5 roughly correspond to the macrophages from the control group. 
+
+### Bonus: Combining K-means and Graph-Based Clustering
+
+Here is a more intense clustering method involving two steps. It is essentially a combination of initial k-means clustering followed by graph-based clustering:
+
+```{r}
+set.seed(0101010)
+kgraph.clusters <- clusterSNNGraph(sce, use.dimred="PCA", use.kmeans=TRUE, kmeans.centers=1000, k=5)
+```
+
+We can plot a T-SNE dimensional reduction with the colors as clusters:
+
+```{r}
+plotTSNE(sce, colour_by=I(kgraph.clusters))
+```
+
+When comparing this combined map to the T-SNE plots, we get a similar breakup of clusters as what is seen above with pure K-means clustering. For instance, Cluster 5 and 3 correspond to the macrophages from severe COVID-19 patients. Also, Clusters 2, 4, and 11 correspond to the macrophages from the control group.
+
+The one major difference that is apparent is that the area indicated by Cluster 4 from the K-means map (which roughly corresponds to T cells), is split up into at least four clusters in this plot. All of these clusters seem to correspond to T-cells; in other words, no cluster represents a distinct cell type and/or condition (control, moderate, or severe).
+
+$$\\[0in]$$
+
+# Takeaways
+
+Based on our dimensionality reduction plots (PCA, T-SNE, UMAP), all three showed a significant difference (expressed by distance, in the graphs) in the expression profiles of macrophages when comparing COVID-19 patients and the control group. A significant difference was even apparent when comparing macrophages from moderate and severe COVID-19 patients.
+
+In the abstract of the paper associated with this data, the authors stated two main conclusions:
+* Proinflammatory monocyte-derived macrophages were abundant in lavage fluid from patients with severe COVID-19.
+* Highly clonally expanded CD8+ T cells were abundant in lavage fluid from moderate COVID-19 patients.
+
+Based on our analysis in Steps 3 and 4, we observed an abundance of macrophages associated with severe COVID-19 patients (supporting the paper's first conclusion). In fact, these macrophages were often grouped together (mostly visible in T-SNE and UMAP plots). 
+
+**A final note:** the pattern identification we are doing in this project is **not** definitive analysis. Rather, it enables us to look at the same data in different ways, approaching it from a different perspective.
+
+If you have any feedback on this project, please email arjuncsubra@gmail.com.
+
+$$\\[0in]$$
+
+# References
+
+1. Single Cell Gene Expression - 10x Genomics. [accessed 2020Aug.13]. https://www.10xgenomics.com/products/single-cell-gene-expression/
+
+2. Single-cell landscape of bronchoalveolar immune cells in patients . [accessed 2020Aug.13]. https://www.nature.com/articles/s41591-020-0901-9
+
+3. Orchestrating Single-Cell Analysis with Bioconductor. [accessed 2020Aug.13]. https://osca.bioconductor.org/
+
+4. scRNA-Seq. [accessed 2020Aug.13]. https://sapac.illumina.com/science/sequencing-method-explorer/kits-and-arrays/scrna-seq.html
+
+5. hemberg-lab/scRNA.seq.course. [accessed 2020Aug.13]. https://scrnaseq-course.cog.sanger.ac.uk/website/index.html
+
+6. Single-cell RNA sequencing technologies and bioinformatics pipelines. [accessed 2020Aug.13]. https://www.nature.com/articles/s12276-018-0071-8
+
+7. Understanding K-means Clustering in Machine Learning | by Dr . [accessed 2020Aug.13]. https://towardsdatascience.com/understanding-k-means-clustering-in-machine-learning-6a6e67336aa1
