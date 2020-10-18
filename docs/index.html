@@ -423,6 +423,7 @@ summary {
 <li><strong>cluster</strong> (through CRAN)</li>
 <li><strong>PCAtools</strong> (through Bioconductor)</li>
 <li><strong>hdf5r</strong> (through CRAN) – if prompted, make sure to say “no” to installing from sources</li>
+<li><strong>AnnotationHub</strong> (through Bioconductor)</li>
 </ul>
 <p>Make sure to say “yes” to updates and additional software that is being downloaded along with these packages.</p>
 <p><strong>Call these packages:</strong></p>
@@ -432,7 +433,8 @@ library(scater)
 library(scran)
 library(cluster)
 library(PCAtools)
-library(hdf5r)</code></pre>
+library(hdf5r)
+library(AnnotationHub)</code></pre>
 <p><span class="math display">\[\\[0in]\]</span></p>
 </div>
 </div>
@@ -593,6 +595,54 @@ seu &lt;- CreateSeuratObject(counts=dgcmatrix.combined, assay=&quot;RNA&quot;, m
 </div>
 <div id="step-3-data-operations" class="section level1">
 <h1>Step 3: Data Operations</h1>
+<p>We have created a SingleCellExperiment object, which is ready for further data processing.</p>
+<div id="quality-control" class="section level3">
+<h3>Quality Control</h3>
+<p>First, we will run <strong>quality control (QC)</strong> on our data. This ensures that we remove low-quality cells in our SingleCellExperiment object. If unaddressed, low-quality cells often distort the results we obtain from later steps in the analysis. For instance, such cells can form distinct clusters that do not reflect actual patterns in gene expression.</p>
+<p>A common type of low quality cells is those with few expressed genes (in other words, scRNA-Seq failed to capture diversity in transcripts). Another common source of low-quality cells are those with high proportions of mitochondrial RNA.</p>
+<p>We can start quality control by identifying mitochondrial genes:</p>
+<pre class="r"><code>location &lt;- rowRanges(sce)
+is.mito &lt;- any(seqnames(location)==&quot;MT&quot;)</code></pre>
+<p>We can now add QC statistics for each cell to the SingleCellExperiment object:</p>
+<pre class="r"><code>df &lt;- perCellQCMetrics(sce, subsets=list(Mito=is.mito))
+df</code></pre>
+<p>Based on these statistics, we can identify what cells we will discard. We are discarding outlier cells (generally calculated by being more than 3 median absolute deviations from the median) when it comes to library sizes, expressed genes, and mitochondrial RNA.</p>
+<pre class="r"><code>qc.lib &lt;- isOutlier(df$sum, log=TRUE, type=&quot;lower&quot;)
+qc.nexprs &lt;- isOutlier(df$detected, log=TRUE, type=&quot;lower&quot;)
+qc.mito &lt;- isOutlier(df$subsets_Mito_percent, type=&quot;higher&quot;)
+
+discard &lt;- qc.lib | qc.nexprs | qc.mito</code></pre>
+<p>We can view a summary of these outliers:</p>
+<pre class="r"><code>DataFrame(LibSize=sum(qc.lib), NExprs=sum(qc.nexprs), MitoProp=sum(qc.mito), Total=sum(discard))</code></pre>
+<pre><code>## DataFrame with 1 row and 4 columns
+##     LibSize    NExprs  MitoProp     Total
+##   &lt;integer&gt; &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+## 1         0         2         0         2</code></pre>
+<p>Now, these outliers can be removed from our SingleCellExperiment:</p>
+<pre class="r"><code>filtered &lt;- sce[,!discard]
+filtered</code></pre>
+<pre><code>## class: SingleCellExperiment 
+## dim: 33538 63101 
+## metadata(0):
+## assays(2): counts logcounts
+## rownames(33538): MIR1302-2HG FAM138A ... AC213203.1 FAM231C
+## rowData names(0):
+## colnames(63101): AAACCTGAGACACTAA-1 AAACCTGAGGAGTACC-1 ...
+##   TTTGTCAGTCTGCAAT-1 TTTGTCAGTGTTGGGA-1
+## colData names(11): orig.ident nCount_RNA ... celltype ident
+## reducedDimNames(0):
+## altExpNames(0):</code></pre>
+</div>
+<div id="normalization-and-feature-selection" class="section level3">
+<h3>Normalization and Feature Selection</h3>
+<p>We can now log-transform our counts. Log-transformation typically reduces skew in data (helping it conform better to a normal distribution):</p>
+<pre class="r"><code>sce &lt;- logNormCounts(sce)</code></pre>
+<p>Once we have normalized our data, we can move on to feature selection (gene selection). This is typically done by selecting highly variable genes. Selecting the most variable genes can help us better explore cell expression differences (as supposed to selecting all genes, some of which are cell-specific and tell us little about the whole dataset).</p>
+<p>Before we select our highly variable genes (HVGs), we need to model gene variation:</p>
+<pre class="r"><code>dec &lt;- modelGeneVar(sce)</code></pre>
+<p>We can now select our top HVGs. I selected a numeric value (instead of a proportional value) because it allowed me to directly control the number of genes. This was because I wanted to make sure computation down the line was not too intensive.</p>
+<pre class="r"><code>hvg &lt;- getTopHVGs(dec, n=1000)</code></pre>
+</div>
 </div>
 
 

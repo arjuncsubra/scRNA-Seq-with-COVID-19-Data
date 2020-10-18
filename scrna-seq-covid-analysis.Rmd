@@ -72,6 +72,7 @@ In R (specifically, in "my-r-file"), install [install Bioconductor](https://www.
 * **cluster** (through CRAN)
 * **PCAtools** (through Bioconductor)
 * **hdf5r** (through CRAN) – if prompted, make sure to say "no" to installing from sources
+* **AnnotationHub** (through Bioconductor)
 
 Make sure to say "yes" to updates and additional software that is being downloaded along with these packages.
 
@@ -85,6 +86,7 @@ library(scran)
 library(cluster)
 library(PCAtools)
 library(hdf5r)
+library(AnnotationHub)
 ```
 
 $$\\[0in]$$
@@ -262,3 +264,71 @@ sce
 $$\\[0in]$$
 
 # Step 3: Data Operations
+
+We have created a SingleCellExperiment object, which is ready for further data processing.
+
+### Quality Control
+
+First, we will run **quality control (QC)** on our data. This ensures that we remove low-quality cells in our SingleCellExperiment object. If unaddressed, low-quality cells often distort the results we obtain from later steps in the analysis. For instance, such cells can form distinct clusters that do not reflect actual patterns in gene expression.
+
+A common type of low quality cells is those with few expressed genes (in other words, scRNA-Seq failed to capture diversity in transcripts). Another common source of low-quality cells are those with high proportions of mitochondrial RNA. 
+
+We can start quality control by identifying mitochondrial genes:
+
+```{r}
+location <- rowRanges(sce)
+is.mito <- any(seqnames(location)=="MT")
+```
+
+We can now add QC statistics for each cell to the SingleCellExperiment object:
+
+```{r}
+df <- perCellQCMetrics(sce, subsets=list(Mito=is.mito))
+df
+```
+
+Based on these statistics, we can identify what cells we will discard. We are discarding outlier cells (generally calculated by being more than 3 median absolute deviations from the median) when it comes to library sizes, expressed genes, and mitochondrial RNA.
+
+```{r}
+qc.lib <- isOutlier(df$sum, log=TRUE, type="lower")
+qc.nexprs <- isOutlier(df$detected, log=TRUE, type="lower")
+qc.mito <- isOutlier(df$subsets_Mito_percent, type="higher")
+
+discard <- qc.lib | qc.nexprs | qc.mito
+``` 
+
+We can view a summary of these outliers:
+
+```{r, results="markup"}
+DataFrame(LibSize=sum(qc.lib), NExprs=sum(qc.nexprs), MitoProp=sum(qc.mito), Total=sum(discard))
+```
+
+Now, these outliers can be removed from our SingleCellExperiment:
+
+```{r, results="markup"}
+filtered <- sce[,!discard]
+filtered
+```
+### Normalization and Feature Selection
+
+We can now log-transform our counts. Log-transformation typically reduces skew in data (helping it conform better to a normal distribution):
+
+```{r}
+sce <- logNormCounts(sce)
+```
+
+Once we have normalized our data, we can move on to feature selection (gene selection). This is typically done by selecting highly variable genes. Selecting the most variable genes can help us better explore cell expression differences (as supposed to selecting all genes, some of which are cell-specific and tell us little about the whole dataset).
+
+Before we select our highly variable genes (HVGs), we need to model gene variation:
+
+```{r}
+dec <- modelGeneVar(sce)
+```
+
+We can now select our top HVGs. I selected a numeric value (instead of a proportional value) because it allowed me to directly control the number of genes. This was because I wanted to make sure computation down the line was not too intensive.
+
+```{r}
+hvg <- getTopHVGs(dec, n=1000)
+```
+
+
