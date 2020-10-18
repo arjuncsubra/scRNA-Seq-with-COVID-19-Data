@@ -128,4 +128,6 @@ c152 <- Read10X_h5("GSM4475053_C152_filtered_feature_bc_matrix.h5")
 
 There is one problem with this data: **many cells do not have complementary metadata** (in this case, cell metadata refers to cell-specific attributes, including the cell type and which person/group the cell came from). With no or incomplete metadata, it is much harder to generate meaningful analyses later onwards.
 
+To resolve this, cells without metadata must be removed.
 
+**Set your working directory to the "cell-alignment" folder in "scRNA-Seq-with-COVID-19-Data-master"** (it contains 12 .csv files starting with "c100numbers.csv"). The following code removes the cells that do not have associated metadata in the individual c objects (c51, c52, etc.).
