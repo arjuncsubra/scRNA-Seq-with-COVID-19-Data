@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE, error=FALSE, warning=FALSE, message=FALSE, re
 
 $$\\[0in]$$
 
+
 #Abstract
 
 This research project showcases an overview of data analysis methods associated with the single-cell RNA sequencing pipeline, with cell clustering maps as the final product. Using Bioconductor and R, this project is based on raw data from a paper focused on identifying respiratory immune characteristics associated with severe acute respiratory syndrome (SARS-CoV-2), through scRNA-Seq analysis of immune cells from bronchoalveolar lavage fluid. This project begins with a walkthrough of preprocessing steps including data unpacking, metadata alignment, quality control, and normalization to help reduce skew in data. This follows with dimensionality reduction plots in three forms: Principal Component Analysis (PCA), T-Distributed Stochastic Neighbor Embedding (T-SNE), and Uniform Manifold Approximation and Projection (UMAP). Using these dimensionality reduction plots, two forms of clustering are demonstrated: graph-based and k-means clustering. Based on these plots, a significant difference can be noted when comparing macrophage expression profiles from COVID-19 patients and the control group: a distinct, large group of macrophages associated with severe COVID-19 patients is apparent. This observation supports the finding in the original paper (Liao et. al.) which states that proinflammatory monocyte-derived macrophages were abundant in lavage fluid from patients with severe COVID-19.
