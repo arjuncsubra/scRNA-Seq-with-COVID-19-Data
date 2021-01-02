@@ -6,7 +6,7 @@ knit: (function(input_file, encoding) {
  encoding=encoding,
  output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 author: "Arjun Subramanian"
-date: "10/17/2020"
+date: "1/1/2021"
 output: html_document
 ---
 
@@ -17,15 +17,15 @@ knitr::opts_chunk$set(echo = TRUE, error=FALSE, warning=FALSE, message=FALSE, re
 $$\\[0in]$$
 
 
-#Abstract
+# Abstract
 
 This research project showcases an overview of data analysis methods associated with the single-cell RNA sequencing pipeline, with cell clustering maps as the final product. Using Bioconductor and R, this project is based on raw data from a paper focused on identifying respiratory immune characteristics associated with severe acute respiratory syndrome (SARS-CoV-2), through scRNA-Seq analysis of immune cells from bronchoalveolar lavage fluid. This project begins with a walkthrough of preprocessing steps including data unpacking, metadata alignment, quality control, and normalization to help reduce skew in data. This follows with dimensionality reduction plots in three forms: Principal Component Analysis (PCA), T-Distributed Stochastic Neighbor Embedding (T-SNE), and Uniform Manifold Approximation and Projection (UMAP). Using these dimensionality reduction plots, two forms of clustering are demonstrated: graph-based and k-means clustering. Based on these plots, a significant difference can be noted when comparing macrophage expression profiles from COVID-19 patients and the control group: a distinct, large group of macrophages associated with severe COVID-19 patients is apparent. This observation supports the finding in the original paper (Liao et. al.) which states that proinflammatory monocyte-derived macrophages were abundant in lavage fluid from patients with severe COVID-19.
 
 $$\\[0in]$$
 
-# Project Overview
+# Overview
 
-In this project, I aim to provide an overview of data analysis associated with **scRNA-Seq (single-cell RNA sequencing)**, by creating cell clustering maps.  
+In this research project, I aim to provide an overview of data analysis associated with **scRNA-Seq (single-cell RNA sequencing)**, by creating cell clustering maps.  
 
 ### scRNA-Seq
 
@@ -65,7 +65,7 @@ Once you have installed R and RStudio, go to the GitHub respository download fol
 
 There, open the R Project file "scrna-seq-covid-project" in RStudio. Create a new R Script/R Markdown document (name it "my-r-file") and save it in "scRNA-Seq-with-COVID-19-Data-master". This is roughly what your main folder should look like:
 
-![](C:/Users/arjun/Documents/checkpoint.PNG)
+![](C:/Users/arjun/Documents/Checkpoint.PNG)
 
 In R (specifically, in "my-r-file"), install [Bioconductor](https://www.bioconductor.org/install/) and [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html).
 
@@ -97,7 +97,7 @@ library(hdf5r)
 
 $$\\[0in]$$
 
-# Step 1: Preprocessing
+## Step 1: Preprocessing
 
 ### Data Loading
 
@@ -322,6 +322,7 @@ rm(c52.keep)
 rm(c52.rev)
 ```
 
+$$\\[0in]$$
 
 # Step 3: Data Operations
 
@@ -576,7 +577,9 @@ plotReducedDim(sce.moderate, dimred="UMAP", colour_by="celltype")
 
 We can see a similar pattern in these plots when compared to the respective T-SNE (and PCA) plots: the macrophages of moderate COVID-19 patients generally clustered in a dense grouping in the top right of the plot, while the macrophages of the severe COVID-19 patients were distributed across the top left area of the plot. Plasma cells (yellow) are also seen significantly more in the severe plot.
 
-# Step 4: Clustering
+$$\\[0in]$$
+
+# Step 5: Clustering
 
 These groupings are called clusters, and the process of generating them is called **clustering**. 
 
